@@ -27,7 +27,7 @@ export const COMPOSED_HANDLER = Symbol('composedHandler')
 
 type Methods = typeof METHODS[number] | typeof METHOD_NAME_ALL_LOWERCASE
 
-function defineDynamicClass(): {
+type HonoBase = {
   new <E extends Env = Env, S extends Schema = {}, BasePath extends string = '/'>(): {
     [M in Methods]: HandlerInterface<E, M, S, BasePath>
   } & {
@@ -35,7 +35,9 @@ function defineDynamicClass(): {
   } & {
     use: MiddlewareHandlerInterface<E, S, BasePath>
   }
-} {
+};
+
+function defineDynamicClass(): HonoBase {
   return class {} as never
 }
 
@@ -60,11 +62,13 @@ export type HonoOptions<E extends Env> = {
   getPath?: GetPath<E>
 }
 
+const honoBase = defineDynamicClass() as HonoBase;
+
 class Hono<
   E extends Env = Env,
   S extends Schema = {},
   BasePath extends string = '/'
-> extends defineDynamicClass()<E, S, BasePath> {
+> extends honoBase<E, S, BasePath> {
   /*
     This class is like an abstract class and does not have a router.
     To use it, inherit the class and implement router in the constructor.
@@ -182,12 +186,12 @@ class Hono<
     return subApp
   }
 
-  onError = (handler: ErrorHandler<E>) => {
+  onError = (handler: ErrorHandler<E>): this => {
     this.errorHandler = handler
     return this
   }
 
-  notFound = (handler: NotFoundHandler<E>) => {
+  notFound = (handler: NotFoundHandler<E>): this => {
     this.notFoundHandler = handler
     return this
   }
@@ -249,7 +253,7 @@ class Hono<
    * `app.routerName()` will be removed in v4.
    * Use `getRouterName()` in `hono/dev` instead of `app.routerName()`.
    */
-  get routerName() {
+  get routerName(): string {
     this.matchRoute('GET', '/')
     return this.router.name
   }
@@ -259,7 +263,7 @@ class Hono<
    * `app.head()` is no longer used.
    * `app.get()` implicitly handles the HEAD method.
    */
-  head = () => {
+  head = (): this => {
     console.warn('`app.head()` is no longer used. `app.get()` implicitly handles the HEAD method.')
     return this
   }
@@ -354,11 +358,11 @@ class Hono<
    * `app.handleEvent()` will be removed in v4.
    * Use `app.fetch()` instead of `app.handleEvent()`.
    */
-  handleEvent = (event: FetchEventLike) => {
+  handleEvent = (event: FetchEventLike): Response | Promise<Response> => {
     return this.dispatch(event.request, event, undefined, event.request.method)
   }
 
-  fetch = (request: Request, Env?: E['Bindings'] | {}, executionCtx?: ExecutionContext) => {
+  fetch = (request: Request, Env?: E['Bindings'] | {}, executionCtx?: ExecutionContext): Response | Promise<Response> => {
     return this.dispatch(request, executionCtx, Env, request.method)
   }
 
@@ -367,7 +371,7 @@ class Hono<
     requestInit?: RequestInit,
     Env?: E['Bindings'] | {},
     executionCtx?: ExecutionContext
-  ) => {
+  ): Response | Promise<Response> => {
     if (input instanceof Request) {
       if (requestInit !== undefined) {
         input = new Request(input, requestInit)

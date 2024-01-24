@@ -23,7 +23,7 @@ export class StreamingApi {
     })
   }
 
-  async write(input: Uint8Array | string) {
+  async write(input: Uint8Array | string): Promise<this> {
     try {
       if (typeof input === 'string') {
         input = this.encoder.encode(input)
@@ -35,13 +35,13 @@ export class StreamingApi {
     return this
   }
 
-  async writeln(input: string) {
+  async writeln(input: string): Promise<this> {
     await this.write(input + '\n')
     return this
   }
 
-  sleep(ms: number) {
-    return new Promise((res) => setTimeout(res, ms))
+  sleep(ms: number): Promise<void> {
+    return new Promise((res) => { setTimeout(res, ms) })
   }
 
   async close() {

@@ -188,11 +188,11 @@ export class HonoRequest<P extends string = '/', I extends Input['out'] = {}> {
     return this.#validatedData[target] as unknown
   }
 
-  get url() {
+  get url(): string {
     return this.raw.url
   }
 
-  get method() {
+  get method(): string {
     return this.raw.method
   }
 
@@ -214,49 +214,49 @@ export class HonoRequest<P extends string = '/', I extends Input['out'] = {}> {
    *   //...
    * })
    */
-  get headers() {
+  get headers(): Headers {
     return this.raw.headers
   }
 
   /** @deprecated
    * Use `c.req.raw.body` instead of `c.req.body`. The `c.req.body` will be removed in v4.
    */
-  get body() {
+  get body(): ReadableStream<Uint8Array> | null {
     return this.raw.body
   }
 
   /** @deprecated
    * Use `c.req.raw.bodyUsed` instead of `c.req.bodyUsed`. The `c.req.bodyUsed` will be removed in v4.
    */
-  get bodyUsed() {
+  get bodyUsed(): boolean {
     return this.raw.bodyUsed
   }
 
   /** @deprecated
    * Use `c.req.raw.integrity` instead of `c.req.integrity`. The `c.req.integrity` will be removed in v4.
    */
-  get integrity() {
+  get integrity(): string {
     return this.raw.integrity
   }
 
   /** @deprecated
    * Use `c.req.raw.keepalive` instead of `c.req.keepalive`. The `c.req.keepalive` will be removed in v4.
    */
-  get keepalive() {
+  get keepalive(): boolean {
     return this.raw.keepalive
   }
 
   /** @deprecated
    * Use `c.req.raw.referrer` instead of `c.req.referrer`. The `c.req.referrer` will be removed in v4.
    */
-  get referrer() {
+  get referrer(): string {
     return this.raw.referrer
   }
 
   /** @deprecated
    * Use `c.req.raw.signal` instead of `c.req.signal`. The `c.req.signal` will be removed in v4.
    */
-  get signal() {
+  get signal(): AbortSignal {
     return this.raw.signal
   }
 }
